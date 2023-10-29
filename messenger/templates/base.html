@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+</head>
+
+<body>
+    {% if request.user.is_authenticated %}
+    <h3>Вы авторизованы как {{ user }}</h3>
+    {% endif %}
+    <ul>
+        <li><a href="{% url 'chats:home' %}">Главная</a></li>
+        {% if request.user.is_authenticated %}
+        <li>
+            <a href="{% url 'users:profile' user.id %}">Мой профиль</a>
+        </li>
+        <li>
+            <a href="{% url 'chats:chats' user.id %}">Мои сообщения</a>
+        </li>
+        {% else %}
+        <li>
+            <a href="{% url 'users:login' %}">Войти</a>
+        </li>
+        <li>
+            <a href="#">Зарегистрироваться</a>
+        </li>
+        {% endif %}
+    </ul>
+
+    {% block content %}
+    {% endblock content %}
+</body>
+
+</html>

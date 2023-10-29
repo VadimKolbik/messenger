@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<p>Тут будет страница чатов <a href="{% url 'users:profile' user.id %}"><i><b>{{ user }}</b></i></a> с другими
+    пользователями</p>
+{% for chat in customuser.sent_mess.all %}
+<p>
+    Отправил:{{ chat.sender.id }}
+    <a href="{% url 'chats:chat' chat.sender.id chat.resepien.id %}">Текст: {{ chat.text }}</a>
+    Получил: {{ chat.resepien.id }}
+</p>
+{% endfor %}
+{% endblock content %}

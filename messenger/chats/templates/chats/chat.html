@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<p>Тут будет страница чата с определенным пользователем</p>
+{% for m in messages %}
+<p>{{ m.text }}</p>
+{% endfor %}
+{% endblock content %}

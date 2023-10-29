@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<h1>Мой профиль</h1>
+<form action="{% url 'users:logout' %}" method="post">
+    {% csrf_token %}
+    <p><button type="submit">Выйти из аккаунта</button></p>
+</form>
+
+{% endblock content %}
