@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<h1>Профиль пользователь {{ user.username }}</h1>
+<p><a href="{% url 'chats:chat' chat_id %}">Открыть переписку</a></p>
+<form action="{% url 'users:logout' %}" method="post">
+    {% csrf_token %}
+    <p><button type="submit">Выйти из аккаунта</button></p>
+</form>
+
+{% endblock content %}

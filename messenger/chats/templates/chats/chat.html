@@ -2,7 +2,12 @@
 
 {% block content %}
 <p>Тут будет страница чата с определенным пользователем</p>
-{% for m in messages %}
+{% for m in messages.messages.all %}
 <p>{{ m.text }}</p>
 {% endfor %}
+<form action="" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Отправить</button>
+</form>
 {% endblock content %}
