@@ -4,7 +4,15 @@
 {% block content %}
 <h1>Все пользователи сайта</h1>
 
-{% for user in users %}
-<p><a href="{% url 'users:profile' user.id %}">{{ user.username }}</a></p>
+{% for u in users %}
+<p><a href="{% url 'users:profile' u.id %}">
+    {% if u.user_info.photo %}
+    <img class="img-article-chats" src="{{ u.user_info.photo.url }}">
+    {% else %}
+    <img class="img-article-chats" src="\media\photos\defalts\default_avatar.png">
+    {% endif %}
+    {{ u.username }}</a>
+</p>
+<hr>
 {% endfor %}
 {% endblock content %}

@@ -7,3 +7,6 @@ class MessageForm(forms.ModelForm):
         model = Message
         fields = ['text', ]
         labels = {'text': '', }
+        widgets = {
+            'text': forms.Textarea(attrs={'cols': 65, 'rows': 1}),
+        }

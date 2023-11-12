@@ -3,6 +3,11 @@
 
 {% block content %}
 <h1>Мой профиль</h1>
+{% if current_user.user_info.photo %}
+<img class="img-article-left" src="{{current_user.user_info.photo.url}}"></p>
+{% endif %}
+<p><a href="{% url 'users:edit_profile' %}">Редактировать профиль</a></p>
+
 <form action="{% url 'users:logout' %}" method="post">
     {% csrf_token %}
     <p><button type="submit">Выйти из аккаунта</button></p>

@@ -4,3 +4,5 @@ __pycache__
 venv
 /static
 .DS_Store
+tasks.txt
+sql_query.py

@@ -1,11 +1,25 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<p>Тут будет страница чатов <a href="{% url 'users:profile' user.id %}"><i><b>{{ user }}</b></i></a> с другими
-    пользователями</p>
+<h3 class="title">Мои сообщения</h3>
 {% for chat in chats %}
-<p>
-    chat_id = <a href="{% url 'chats:chat' chat.id %}">{{ chat.id }}</a>. Участники чата: {% for m in chat.members.all %} {{ m.username }}, {% endfor %}
-</p>
+<a href="{{ chat.get_absolute_url }}">
+    <div class="chat">
+        <div>
+            {% for m in chat.members.all %}
+            {% if m != user %}
+                {% if current_user.user_info.photo %}
+                    <img class="img-article-chats " src="{{current_user.user_info.photo.url}}"></p>
+                {% else %}
+                    <img class="img-article-chats " src="\media\photos\defalts\default_avatar.png"></p>
+                {% endif %}
+            {{ m.username }}
+            {% endif %}
+            {% endfor %}
+        </div>
+        <div> {{ chat.lastmessage|truncatechars:20 }} | {{chat.lastmessage.time_create|date:"d.m.Y H:i"}} </div>
+
+    </div>
+</a>
 {% endfor %}
 {% endblock content %}

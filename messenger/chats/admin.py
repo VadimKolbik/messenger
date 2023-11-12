@@ -3,8 +3,10 @@ from .models import *
 # Register your models here.
 
 class MessageAdmin(admin.ModelAdmin):
-    list_display = ['id', 'sender', 'time_create', ]
+    list_display = ['id', 'sender', 'time_create', 'is_readed', 'chat_id']
     list_display_links = ['id', 'sender', 'time_create',  ]
+    list_filter = ['chat_id']
+
 
 class ChatAdmin(admin.ModelAdmin):
     list_display = ['id', 'type_chat']

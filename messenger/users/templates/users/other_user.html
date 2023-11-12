@@ -2,8 +2,14 @@
 
 
 {% block content %}
-<h1>Профиль пользователь {{ user.username }}</h1>
-<p><a href="{% url 'chats:chat' chat_id %}">Открыть переписку</a></p>
+<h1>Профиль пользователь {{ current_user.username }}</h1>
+<p>
+    {% if chat %}
+    <a href="{{ chat.get_absolute_url }}">Открыть переписку</a>
+    {% else %}
+    <a href="{% url 'chats:create_chat' current_user.id %}">Начать переписку</a>
+    {% endif %}
+</p>
 <form action="{% url 'users:logout' %}" method="post">
     {% csrf_token %}
     <p><button type="submit">Выйти из аккаунта</button></p>

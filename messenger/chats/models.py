@@ -1,5 +1,7 @@
 #chats\models.py
 from django.db import models
+from .util import next_or_prev_in_order
+from django.urls import reverse
 
 # Create your models here.
 class Message(models.Model):
@@ -22,6 +24,19 @@ class Message(models.Model):
     
     def __str__(self):
         return self.text
+    
+    def prev_by_time_create(self):
+        filter_list = Message.objects.filter(chat_id=self.chat_id)
+        return next_or_prev_in_order(self, True, filter_list)
+    
+    def next_by_time_create(self):
+        filter_list = Message.objects.filter(chat_id=self.chat_id)
+        return next_or_prev_in_order(self, False, filter_list)
+    
+    def reading_messages(self):
+        Message.objects.filter(is_readed=Message.MessageStatus.UNREAD).\
+            update(is_readed=Message.MessageStatus.READ)
+
 
 class Chat(models.Model):
     class ChatType(models.TextChoices):
@@ -36,5 +51,13 @@ class Chat(models.Model):
         verbose_name_plural = 'Чаты'
     
     def __str__(self):
-        members = self.members.all()
-        return f'id={self.id} type={self.type_chat} для {[m.username for m in members]}'
+        return f'id={self.id} type={self.type_chat} time: {self.lastmessage().time_create}'
+    
+    def get_absolute_url(self):
+        return reverse('chats:chat', kwargs={'chat_id': self.pk})
+    
+    def lastmessage(self):
+        try:
+            return self.messages.order_by('-time_create')[0]
+        except IndexError:
+            return None

@@ -1,9 +1,11 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="text/css" href="{% static 'chats/css/style.css' %}" rel="stylesheet" />
     <title>{{ title }}</title>
 </head>
 
@@ -11,32 +13,36 @@
     {% if request.user.is_authenticated %}
     <h3>Вы авторизованы как {{ user }}</h3>
     {% endif %}
-    <div>
-        <ul>
-            <li><a href="#">Главная</a></li>
-            {% if request.user.is_authenticated %}
-            <li>
-                <a href="{% url 'users:profile' user.id %}">Мой профиль</a>
-            </li>
-            <li>
-                <a href="{% url 'chats:all_chats' %}">Мои сообщения</a>
-            </li>
-            <li>
-                <a href="{% url 'users:people' %}">Люди</a>
-            </li>
-            {% else %}
-            <li>
-                <a href="{% url 'users:login' %}">Войти</a>
-            </li>
-            <li>
-                <a href="#">Зарегистрироваться</a>
-            </li>
-            {% endif %}
-        </ul>
-    </div>
-    <div>
-        {% block content %}
-        {% endblock content %}
+    <div class="main">
+        <div class="menu">
+            <ul>
+                {% if request.user.is_authenticated %}
+                <li>
+                    <a href="{% url 'users:profile' user.id %}">Мой профиль</a>
+                </li>
+                <li>
+                    <a href="{% url 'chats:all_chats' %}">Мои сообщения</a>
+                </li>
+                <li>
+                    <a href="{% url 'users:people' %}">Люди</a>
+                </li>
+                <li>
+                    <a href="{% url 'users:logout' %}">Выйти</a>
+                </li>
+                {% else %}
+                <li>
+                    <a href="{% url 'users:login' %}">Войти</a>
+                </li>
+                <li>
+                    <a href="{% url 'users:signup' %}">Зарегистрироваться</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+        <div class="content">
+            {% block content %}
+            {% endblock content %}
+        </div>
     </div>
 </body>
 

@@ -1,13 +1,37 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<p>Тут будет страница чата с определенным пользователем</p>
-{% for m in messages.messages.all %}
-<p>{{ m.text }}</p>
-{% endfor %}
-<form action="" method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Отправить</button>
-</form>
+<div class="chat">
+    <h4></h4>
+    <div class="messages">
+        {% for m in chat %}
+        <div class="message">
+            <div>
+                {% if m.sender != m.prev_by_time_create.sender %}
+                <a href="{{ m.sender.get_absolute_url }}">
+                    {% if m.sender.user_info.photo %}
+                    <img class="img-article-chats" src="{{m.sender.user_info.photo.url}}">
+                    {% else %}
+                    <img class="img-article-chats" src="\media\photos\defalts\default_avatar.png">
+                    {% endif %}
+                    <p>{{ m.sender.username }}</a>
+                {% endif %}
+            </div>
+            <div>
+                {% if m.is_readed %}
+                <p>{{ m.text }} | {{ m.time_create|date:"d.m.Y H:i" }}</p>
+                {% else %}
+                <p>{{ m.text }} | {{ m.time_create|date:"d.m.Y H:i" }} не прочитано</p>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Отправить</button>
+    </form>
+</div>
 {% endblock content %}

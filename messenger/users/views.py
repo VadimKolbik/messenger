@@ -1,59 +1,88 @@
 from typing import Any
+from django.db import models
 from django.db.models.query import QuerySet
-from django.shortcuts import render, HttpResponse, HttpResponseRedirect
-from django.urls import reverse
-from django.contrib.auth import authenticate, login, logout
-from django.views.generic import ListView, DetailView
+from django.forms.models import BaseModelForm
+from django.http import HttpResponse
+from django.shortcuts import render, HttpResponse, HttpResponseRedirect, redirect
+from django.urls import reverse, reverse_lazy
+from django.contrib.auth.views import LoginView
+from django.contrib.auth.forms import AuthenticationForm
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, View
+from django.db.models import Count
 
-from .forms import CustomUserCreationForm, CustomUserChangeForm, LoginUserForm
+from .forms import *
 from .models import *
 from chats.models import Chat
+from chats.views import LoginRequiredMixin
 
-# Create your views here.
-def login_user(request):
-    if request.method == 'POST':
-        form = LoginUserForm(request.POST)
-        if form.is_valid():
-            cd = form.cleaned_data
-            user = authenticate(request, username=cd['username'], password=cd['password'])
-            if user and user.is_active:
-                login(request, user)
-                return HttpResponseRedirect(reverse('chats:all_chats'))
-    else:
-        form = LoginUserForm()
+
+class LoginUserView(LoginView):
+    form_class = LoginUserForm
+    template_name = 'users/login.html'
+    extra_context = {'title': 'Авторизация'}
+
+
+class SignUpView(CreateView):
+    form_class = CustomUserCreationForm
+    template_name = 'users/signup.html'
+    extra_context = {
+        'title': 'Регистрация'
+    }
+    success_url = reverse_lazy('users:login')
     
-    return render(request, 'users/login.html', {'form': form})
+    def form_valid(self, form):
+        """If the form is valid, save the associated model."""
+        self.object = form.save()
+        UserInfo(user=form.instance).save()
+        return HttpResponseRedirect(self.get_success_url())
 
-def logout_user(request):
-    if request.method == 'POST':
-        logout(request)
-        return HttpResponseRedirect(reverse('users:login'))
-    else:
-        return render(request, 'users/logout.html')
 
 class ProfileView(DetailView):
     model = CustomUser
     template_name = 'users/other_user.html'
-    context_object_name = 'user'
+    context_object_name = 'current_user'
     pk_url_kwarg = 'user_id'
+
+    def get_queryset(self) -> QuerySet[Any]:
+        return CustomUser.objects.filter(pk=self.kwargs['user_id']).select_related('user_info')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['chat'] = Chat.objects.filter(members__in=[self.request.user.id, self.kwargs['user_id']], type_chat=Chat.ChatType.DIALOG).annotate(c=Count('members')).filter(c=2).first()
+        return context
     
     def get_template_names(self):
         if self.request.user.id == self.kwargs['user_id']:
             return ('users/profile.html', )
         else:
             return ('users/other_user.html', )
-    
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['chat_id'] = Chat.objects.filter(members__in=[self.request.user.id, self.kwargs['user_id']]).distinct()[0].id
-        return context
 
+
+class EditProfileView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        profile, create = UserInfo.objects.get_or_create(user_id=request.user.id)
+        user_info_form = UserInfoForm(instance=profile)
+        data = {'user_info_form': user_info_form}
+        return render(request, 'users/edit_profile.html', data)
+
+    def post(self, request, *args, **kwargs):
+        profile, create = UserInfo.objects.get_or_create(user_id=request.user.id)
+        user_info_form = UserInfoForm(request.POST, request.FILES, instance=profile)
+        if user_info_form.is_valid():
+            user_info_form.save()
+            return redirect('users:edit_profile')
+        
+        data = {'user_info_form': user_info_form}
+        return render(request, 'users/edit_profile.html', data)
 
 class PeopleView(ListView):
     '''All signup people'''
     model = CustomUser
     template_name = 'users/people.html'
     context_object_name = 'users'
+
+    def get_queryset(self) -> QuerySet[Any]:
+        return CustomUser.objects.all().select_related('user_info')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
