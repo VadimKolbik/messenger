@@ -17,7 +17,7 @@
             {% endif %}
             {% endfor %}
         </div>
-        <div> {{ chat.lastmessage|truncatechars:20 }} | {{chat.lastmessage.time_create|date:"d.m.Y H:i"}} </div>
+        <div> {{ chat.last_message|truncatechars:20 }} | {{chat.last_message_time_create|date:"d.m.Y H:i"}} </div>
 
     </div>
 </a>

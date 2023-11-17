@@ -1,12 +1,9 @@
 from typing import Any
 from django.db import models
 from django.db.models.query import QuerySet
-from django.forms.models import BaseModelForm
-from django.http import HttpResponse
 from django.shortcuts import render, HttpResponse, HttpResponseRedirect, redirect
 from django.urls import reverse, reverse_lazy
-from django.contrib.auth.views import LoginView
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.views import LoginView, PasswordChangeView, PasswordChangeDoneView
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, View
 from django.db.models import Count
 
@@ -88,3 +85,14 @@ class PeopleView(ListView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Люди'
         return context
+
+
+class UserPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
+    form_class = UserPasswordChangeForm
+    success_url = reverse_lazy('users:password_change_done')
+    template_name = 'users/password_change_form.html'
+    extra_context = {'title': 'Смена пароля'}
+
+class UserPasswordChangeDoneView(LoginRequiredMixin, PasswordChangeDoneView):
+    template_name = 'users/password_change_done.html'
+    extra_context = {'title': 'Пароль изменён'}

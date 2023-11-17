@@ -30,12 +30,10 @@ class ChatsView(MyLoginRequiredView, ListView):
     def get_queryset(self):
         #empty chats is have and filtering them
         #не получилось без сырого запроса сделать
-        # return Chat.objects.filter(members__in=[self.request.user.id]).annotate(c=Count('messages')).filter(c__gt=0).prefetch_related('members')
-        return Chat.objects.raw(chats_filter).prefetch_related('members')
-
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     return context
+        return Chat.objects.filter(members__in=[self.request.user.id]).\
+                            annotate(c=Count('messages'), last_message=Max('messages__id'), last_message_time_create=Max('messages__time_create')).\
+                            filter(c__gt=0).order_by('-last_message_time_create').\
+                            prefetch_related('members')
 
 
 class ChatView(MyLoginRequiredView, DetailView):

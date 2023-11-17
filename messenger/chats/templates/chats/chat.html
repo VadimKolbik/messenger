@@ -14,7 +14,8 @@
                     {% else %}
                     <img class="img-article-chats" src="\media\photos\defalts\default_avatar.png">
                     {% endif %}
-                    <p>{{ m.sender.username }}</a>
+                    <p>{{ m.sender.username }}
+                </a>
                 {% endif %}
             </div>
             <div>
@@ -28,10 +29,13 @@
         {% endfor %}
     </div>
 
-    <form action="" method="post">
+    <form action="" method="post" target="#here">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Отправить</button>
+        <button id="send_enter" onclick="run()" type="submit">Отправить</button>
     </form>
 </div>
+
+
+
 {% endblock content %}

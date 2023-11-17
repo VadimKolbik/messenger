@@ -1,7 +1,7 @@
 # users/forms.py
 from typing import Any
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm, AuthenticationForm
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm, AuthenticationForm, PasswordChangeForm
 from .models import CustomUser, UserInfo
 
 class LoginUserForm(AuthenticationForm):
@@ -23,9 +23,6 @@ class CustomUserCreationForm(UserCreationForm):
         if CustomUser.objects.filter(email=email).exists():
             raise forms.ValidationError("Такой E-mail уже существует!")
         return email
-    
-    
-
 
     class Meta:
         model = CustomUser
@@ -55,3 +52,9 @@ class UserInfoForm(forms.ModelForm):
     class Meta:
         model = UserInfo
         fields = ['photo', 'about_me']
+
+
+class UserPasswordChangeForm(PasswordChangeForm):
+    old_password = forms.CharField(label='Старый пароль', widget=forms.PasswordInput())
+    new_password1 = forms.CharField(label='Новый пароль', widget=forms.PasswordInput())
+    new_password2 = forms.CharField(label='Подтверждение пароля', widget=forms.PasswordInput())

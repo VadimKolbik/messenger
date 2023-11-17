@@ -12,7 +12,7 @@ class Message(models.Model):
     chat = models.ForeignKey('Chat', related_name='messages', verbose_name='Чат', on_delete=models.CASCADE)
     text = models.TextField(null=False, max_length=1000, verbose_name='Текст сообщения')
     time_create = models.DateTimeField(auto_now_add=True, verbose_name='Время создания')
-    sender = models.ForeignKey('users.CustomUser', on_delete=models.SET_DEFAULT, default='Пользователь не найден',
+    sender = models.ForeignKey('users.CustomUser', on_delete=models.SET_DEFAULT, default=None,
                                 null=False, related_name='sent_mess', verbose_name='Отправитель')
     is_readed = models.BooleanField(choices=tuple(map(lambda x: (bool(x[0]), x[1]), MessageStatus.choices)),
                                     default=MessageStatus.UNREAD, verbose_name='Статус')
@@ -35,7 +35,7 @@ class Message(models.Model):
     
     def reading_messages(self):
         Message.objects.filter(is_readed=Message.MessageStatus.UNREAD).\
-            update(is_readed=Message.MessageStatus.READ)
+                        update(is_readed=Message.MessageStatus.READ)
 
 
 class Chat(models.Model):
