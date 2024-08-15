@@ -11,7 +11,7 @@
     {% else %}
     <img class="img-article-chats" src="\media\photos\defalts\default_avatar.png">
     {% endif %}
-    {% if u.first_name %} {{ u.first_name }} {% else %} No name {% endif %} 
+    {% if u.first_name %} {{ u.first_name }} {% else %} {{ u.username }} {% endif %} 
     {% if u.last_name %} {{ u.last_name }} {% endif %}</a>
 </p>
 <hr>

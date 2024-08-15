@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-rh8(7unr0nyqyf1e^r3_=2a&108_u^$d0qc+u-qn!1kxgxc3$3
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', ]
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -96,10 +96,10 @@ DATABASES = {
     'default': {
     'ENGINE': 'django.db.backends.postgresql',
     'NAME': 'messengerdb',
-    'USER': 'postgres',
+    'USER': 'vadim',
     'PASSWORD': 'tifaru60',
     'HOST': '127.0.0.1',
-    'PORT': '5433'
+    'PORT': '5432'
 }
 }
 
@@ -141,7 +141,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [
-    BASE_DIR / 'static',
+    # BASE_DIR / 'static',
 ]
 
 MEDIA_ROOT = BASE_DIR / 'media'

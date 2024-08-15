@@ -1,49 +1,34 @@
-{% load static %}
+{% load static custom_messenger_tags %}
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    
     <link type="text/css" href="{% static 'chats/css/style.css' %}" rel="stylesheet" />
     <title>{{ title }}</title>
 </head>
 
 <body>
     {% if request.user.is_authenticated %}
-    <h3>Вы авторизованы как {{ user }}</h3>
+    <h3>Добро пожаловать, {{ user }}</h3>
     {% endif %}
-    <div class="main">
+    
+    <div>
         <div class="menu">
-            <ul>
-                {% if request.user.is_authenticated %}
-                <li>
-                    <a href="{% url 'users:profile' user.id %}">Мой профиль</a>
-                </li>
-                <li>
-                    <a href="{% url 'chats:all_chats' %}">Мои сообщения</a>
-                </li>
-                <li>
-                    <a href="{% url 'users:people' %}">Люди</a>
-                </li>
-                <li>
-                    <a href="{% url 'users:logout' %}">Выйти</a>
-                </li>
-                {% else %}
-                <li>
-                    <a href="{% url 'users:login' %}">Войти</a>
-                </li>
-                <li>
-                    <a href="{% url 'users:signup' %}">Зарегистрироваться</a>
-                </li>
-                {% endif %}
-            </ul>
+            {% menu_tag request=request active_page=active_page %}
         </div>
         <div class="content">
             {% block content %}
             {% endblock content %}
         </div>
     </div>
+
+    <!-- Bootstrap в связке с Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 </body>
 
 </html>

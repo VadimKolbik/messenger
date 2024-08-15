@@ -3,6 +3,8 @@
 
 {% block content %}
 <h1>Профиль пользователь {{ current_user.username }}</h1>
+<h1>THERE IS PHOTO OF USER</h1>
+<p><a href="#">Добавить в друзья</p></a>
 <p>
     {% if chat %}
     <a href="{{ chat.get_absolute_url }}">Открыть переписку</a>

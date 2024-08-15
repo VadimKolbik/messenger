@@ -13,7 +13,7 @@ class Message(models.Model):
     text = models.TextField(null=False, max_length=1000, verbose_name='Текст сообщения')
     time_create = models.DateTimeField(auto_now_add=True, verbose_name='Время создания')
     sender = models.ForeignKey('users.CustomUser', on_delete=models.SET_DEFAULT, default=None,
-                                null=False, related_name='sent_mess', verbose_name='Отправитель')
+                                related_name='sent_mess', verbose_name='Отправитель')
     is_readed = models.BooleanField(choices=tuple(map(lambda x: (bool(x[0]), x[1]), MessageStatus.choices)),
                                     default=MessageStatus.UNREAD, verbose_name='Статус')
 
@@ -51,7 +51,10 @@ class Chat(models.Model):
         verbose_name_plural = 'Чаты'
     
     def __str__(self):
-        return f'id={self.id} type={self.type_chat} time: {self.lastmessage().time_create}'
+        try:
+            return f'id={self.id} type={self.type_chat} time: {self.lastmessage().time_create}'
+        except:
+            return f'id={self.id} type={self.type_chat} time: '
     
     def get_absolute_url(self):
         return reverse('chats:chat', kwargs={'chat_id': self.pk})

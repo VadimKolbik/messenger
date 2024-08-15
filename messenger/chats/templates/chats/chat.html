@@ -7,7 +7,7 @@
         {% for m in chat %}
         <div class="message">
             <div>
-                {% if m.sender != m.prev_by_time_create.sender %}
+                {% if m.sender != m.next_by_time_create.sender %}
                 <a href="{{ m.sender.get_absolute_url }}">
                     {% if m.sender.user_info.photo %}
                     <img class="img-article-chats" src="{{m.sender.user_info.photo.url}}">
@@ -20,22 +20,24 @@
             </div>
             <div>
                 {% if m.is_readed %}
-                <p>{{ m.text }} | {{ m.time_create|date:"d.m.Y H:i" }}</p>
+                <p>{{ m.text }} | <span style="float: right;">{{ m.time_create|date:"d.m.Y H:i" }}</span></p>
                 {% else %}
-                <p>{{ m.text }} | {{ m.time_create|date:"d.m.Y H:i" }} не прочитано</p>
+                <p style="background-color: rgb(230, 255, 253);">{{ m.text }} | <span style="float: right;">{{ m.time_create|date:"d.m.Y H:i" }}</span></p>
                 {% endif %}
             </div>
         </div>
         {% endfor %}
+        {% if not chat %}
+            <p style="justify-content: center; align-content: center;">Переписка пуста КАК УДАЛИТЬ ЧАТ, ЕСЛИ Я НЕ ОТПРАВЛЮ СООБЩЕНИЕ</p>    
+        {% endif%}
     </div>
 
     <form action="" method="post" target="#here">
         {% csrf_token %}
         {{ form.as_p }}
         <button id="send_enter" onclick="run()" type="submit">Отправить</button>
+        <p>ДОБАВИТЬ ВОЗМОЖНОСТЬ ОТПРАВЛЯТЬ ФОТО</p>
     </form>
 </div>
-
-
 
 {% endblock content %}

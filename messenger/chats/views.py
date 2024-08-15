@@ -8,21 +8,14 @@ from django.http import HttpResponseNotFound, Http404
 from django.db.models import prefetch_related_objects
 from .models import *
 from .forms import MessageForm
-from .queries import chats_filter
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 class MyLoginRequiredView(LoginRequiredMixin):
     login_url = '/users/login'
 
-menu = [
-    {'title': 'Главная', 'url': 'home'},
-    {'title': 'Регистрация', 'url': 'users:login'},
-    {'title': 'Авторизация', 'url': 'users:login'},
-]
-
 class ChatsView(MyLoginRequiredView, ListView):
-    '''All chats of users'''
+    '''All chats of user'''
     model = Chat
     template_name = 'chats/chats.html'
     context_object_name = 'chats'
@@ -34,6 +27,11 @@ class ChatsView(MyLoginRequiredView, ListView):
                             annotate(c=Count('messages'), last_message=Max('messages__id'), last_message_time_create=Max('messages__time_create')).\
                             filter(c__gt=0).order_by('-last_message_time_create').\
                             prefetch_related('members')
+    
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context['active_page'] = 2
+        return context
 
 
 class ChatView(MyLoginRequiredView, DetailView):
@@ -49,7 +47,7 @@ class ChatView(MyLoginRequiredView, DetailView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['menu'] = menu
+        context['active_page'] = 2
         context['title'] = 'Чат'
         context['form'] = MessageForm()
         return context

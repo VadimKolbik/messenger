@@ -2,14 +2,15 @@
 
 {% block content %}
 <h3 class="title">Мои сообщения</h3>
+<button><span style="float: right; font-size: small;">Создать беседу</span></button>
 {% for chat in chats %}
 <a href="{{ chat.get_absolute_url }}">
     <div class="chat">
         <div>
             {% for m in chat.members.all %}
             {% if m != user %}
-                {% if current_user.user_info.photo %}
-                    <img class="img-article-chats " src="{{current_user.user_info.photo.url}}"></p>
+                {% if m.user_info.photo %}
+                    <img class="img-article-chats " src="{{m.user_info.photo.url}}"></p>
                 {% else %}
                     <img class="img-article-chats " src="\media\photos\defalts\default_avatar.png"></p>
                 {% endif %}
@@ -17,7 +18,17 @@
             {% endif %}
             {% endfor %}
         </div>
-        <div> {{ chat.last_message|truncatechars:20 }} | {{chat.last_message_time_create|date:"d.m.Y H:i"}} </div>
+        {% with chat.lastmessage as last_mess_in_chat %}
+        <div> {{ last_mess_in_chat }}<span style="float: right; font-size: small;">{{ last_mess_in_chat.time_create|date:"d.m.Y H:i" }}</span>
+            {% if not last_mess_in_chat.is_readed %}
+            <button type="button" class="btn position-relative">
+                <span class="position-absolute top-0 start-10 translate-middle p-1 bg-danger border border-light rounded-circle">
+                  <span class="visually-hidden">Новые уведомления</span>
+                </span>
+              </button>
+            {% endif %}
+        </div>
+        {% endwith %}
 
     </div>
 </a>

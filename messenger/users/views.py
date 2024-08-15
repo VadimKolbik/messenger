@@ -46,6 +46,7 @@ class ProfileView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['chat'] = Chat.objects.filter(members__in=[self.request.user.id, self.kwargs['user_id']], type_chat=Chat.ChatType.DIALOG).annotate(c=Count('members')).filter(c=2).first()
+        context['active_page'] = 1 if self.request.user.id == self.kwargs['user_id'] else 3
         return context
     
     def get_template_names(self):
@@ -84,6 +85,7 @@ class PeopleView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Люди'
+        context['active_page'] = 3
         return context
 
 
