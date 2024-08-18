@@ -25,7 +25,7 @@ class ChatsView(MyLoginRequiredView, ListView):
         #не получилось без сырого запроса сделать
         return Chat.objects.filter(members__in=[self.request.user.id]).\
                             annotate(c=Count('messages'), last_message=Max('messages__id'), last_message_time_create=Max('messages__time_create')).\
-                            filter(c__gt=0).order_by('-last_message_time_create').\
+                            order_by('-last_message_time_create').\
                             prefetch_related('members')
     
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
@@ -80,13 +80,30 @@ class CreateChatView(MyLoginRequiredView, View):
     def get(self, request, user_id):
         chats = Chat.objects.filter(members__in=[request.user.id, user_id], type_chat=Chat.ChatType.DIALOG).annotate(c=Count('members')).filter(c=2)
         if chats.count() == 0:
-            chat = Chat.objects.create()
-            chat.members.add(request.user)
-            chat.members.add(user_id)
+            return render(request, 'chats/chat.html', {'form': MessageForm()})
         else:
             chat = chats.first()
         return redirect(reverse('chats:chat', kwargs={'chat_id': chat.id}))
+    
+    def post(self, request, user_id):
+        chats = Chat.objects.filter(members__in=[request.user.id, user_id], type_chat=Chat.ChatType.DIALOG).annotate(c=Count('members')).filter(c=2)
+        if not chats:
+            chat = Chat.objects.create()
+            chat.members.add(request.user)
+            chat.members.add(user_id)
+            form = MessageForm(request.POST)
+            if form.is_valid():
+                message = form.save(commit=False)
+                message.chat_id = chat.pk
+                message.sender = request.user
+                message.save()
+            return redirect(reverse('chats:chat', kwargs={'chat_id': chat.id}))
+        else:
+            return HttpResponseNotFound('<h1>Упс, что-то пошло не так...</h1>')
 
+
+def new_chat_without_message(request):
+    return render(request, 'chats/chat.html')
 
 def index(request):
     return render(request, 'chats/index.html')

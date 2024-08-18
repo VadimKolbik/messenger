@@ -7,7 +7,7 @@
 <img class="img-article-left" src="{{current_user.user_info.photo.url}}"></p>
 {% endif %}
 <p><a href="{% url 'users:edit_profile' %}">Редактировать профиль</a></p>
-<p><a href="#">Мои друзья</p></a>
+<p><a href="{% url 'users:friends' %}">Мои друзья</p></a>
 <form action="{% url 'users:logout' %}" method="post">
     {% csrf_token %}
     <p><button type="submit">Выйти из аккаунта</button></p>

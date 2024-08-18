@@ -98,3 +98,39 @@ class UserPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
 class UserPasswordChangeDoneView(LoginRequiredMixin, PasswordChangeDoneView):
     template_name = 'users/password_change_done.html'
     extra_context = {'title': 'Пароль изменён'}
+
+
+def add_to_friends(request, friend_id):
+    print(UserInfo.objects.get(user=request.user.id).friends.add(UserInfo.objects.get(user=friend_id).pk))
+    print(UserInfo.objects.get(user=request.user.id).friends.all())
+    return HttpResponseRedirect(reverse('users:profile', args=[friend_id,]))
+
+class FriendsView(ListView):
+    '''All friends of user'''
+    model = CustomUser
+    template_name = 'users/my_friends.html'
+    context_object_name = 'users'
+
+    def get_queryset(self) -> QuerySet[Any]:
+        return self.request.user.user_info.friends.all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Друзья'
+        context['active_page'] = 1
+        return context
+    
+class PeopleView(ListView):
+    '''All signup people'''
+    model = CustomUser
+    template_name = 'users/people.html'
+    context_object_name = 'users'
+
+    def get_queryset(self) -> QuerySet[Any]:
+        return CustomUser.objects.all().select_related('user_info')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Люди'
+        context['active_page'] = 3
+        return context
