@@ -2,10 +2,12 @@
 
 {% block content %}
 <h3 class="title">Мои сообщения</h3>
-<button><span style="float: right; font-size: small;">Создать беседу</span></button>
+<a href="{% url 'chats:create_group_chat' request.user.pk %}" type="btn"><span style="float: right; font-size: smaller; color: black;">Создать беседу</span></a>
+
 {% for chat in chats %}
 <a href="{{ chat.get_absolute_url }}">
     <div class="chat">
+        {% if chat.type_chat == 'D' %}
         <div>
             {% for m in chat.members.all %}
             {% if m != user %}
@@ -18,18 +20,28 @@
             {% endif %}
             {% endfor %}
         </div>
-        {% with chat.lastmessage as last_mess_in_chat %}
-        <div> {{ last_mess_in_chat }}<span style="float: right; font-size: small;">{{ last_mess_in_chat.time_create|date:"d.m.Y H:i" }}</span>
-            {% if not last_mess_in_chat.is_readed %}
-            <button type="button" class="btn position-relative">
-                <span class="position-absolute top-0 start-10 translate-middle p-1 bg-danger border border-light rounded-circle">
-                  <span class="visually-hidden">Новые уведомления</span>
-                </span>
-              </button>
-            {% endif %}
+        {% elif chat.type_chat == 'C' %}
+        <div>
+            <img class="img-article-chats " src="\media\photos\defalts\group_chat.png"></p>
+            {{ chat.title_chat }}
         </div>
+        {% endif %}
+        <div>
+        {% with chat.lastmessage as last_mess_in_chat %}
+            {% if last_mess_in_chat %}
+                {{ last_mess_in_chat }}<span style="float: right; font-size: small;">{{ last_mess_in_chat.time_create|date:"d.m.Y H:i" }}</span>
+                {% if not last_mess_in_chat.is_readed %}
+                <button type="button" class="btn position-relative">
+                    <span class="position-absolute top-0 start-10 translate-middle p-1 bg-danger border border-light rounded-circle">
+                    <span class="visually-hidden">Новые уведомления</span>
+                    </span>
+                </button>
+                {% endif %}
+                {% else %}
+                Чат пуст...
+            {% endif %}
         {% endwith %}
-
+        </div>        
     </div>
 </a>
 {% endfor %}

@@ -45,6 +45,8 @@ class Chat(models.Model):
     
     type_chat = models.CharField(max_length=1, choices=ChatType.choices, default=ChatType.DIALOG)
     members = models.ManyToManyField('users.CustomUser', related_name='chats', verbose_name='Участники')
+    title_chat = models.CharField(max_length=100, blank=True, verbose_name='Название группового чата')
+    # group_chat_photo = models.ImageField(upload_to="photos/chats/%Y/%m/%d/", default=None, blank=True, null=True, verbose_name='Фото')
 
     class Meta:
         verbose_name = 'Чат'

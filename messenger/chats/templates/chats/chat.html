@@ -2,7 +2,11 @@
 
 {% block content %}
 <div class="chat">
-    <h4></h4>
+    {% if group_chat %}
+    <h5><img class="img-article-chats " src="\media\photos\defalts\group_chat.png"></p>
+        {{ group_chat.title_chat }}<span style="font-size: small; float: right;">
+            <a href="{% url 'chats:info_about_chat' group_chat.pk %}">Информация по беседе</a></span></h5>
+    {% endif %}
     <div class="messages">
         {% for m in chat %}
         <div class="message">
@@ -27,9 +31,6 @@
             </div>
         </div>
         {% endfor %}
-        {% if not chat %}
-            <p style="justify-content: center; align-content: center;">Переписка пуста КАК УДАЛИТЬ ЧАТ, ЕСЛИ Я НЕ ОТПРАВЛЮ СООБЩЕНИЕ</p>    
-        {% endif%}
     </div>
 
     <form action="" method="post" target="#here">

@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="chat">
+    <h5><img class="img-article-chats " src="\media\photos\defalts\group_chat.png"></p>
+        {{ chat.title_chat }}</h5>
+    <div>
+        <div>
+        <p style="text-align: center;">Участники чата</p>
+            <ul class="list-group">
+                {% with chat.members.all as chat_members %}
+                {% for user in chat_members %}
+                    <li class="list-group-item"><a href="{{user.get_absolute_url}}">{{user.username}}</a>
+                        <a href="{% url 'chats:delete_user_from_chat' chat.pk user.pk %}"><span style="float: right; font-size: small;">
+                            {% if user != request.user %}
+                            Исключить из беседы
+                            {%else%}
+                            Выйти из беседы
+                            {% endif %}
+                        </span></a></li>
+                {% endfor %}
+                <li class="list-group-item"><span style="float: right; font-size: small;">
+                    <a data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                        Добавить пользователя</a></span></li>
+              </ul>
+              <div class="collapse" id="collapseExample">
+                <ul class="list-group">
+                {% for friend in friends %}
+                <li class="list-group-item">{{ friend.user.username }}
+                    <span style="float: right; font-size: small;">
+                        {% if friend.user not in chat_members %}
+                        <a href="{% url 'chats:add_user_in_chat' chat.pk friend.user.pk %}">
+                            Добавить</a>
+                            {% else %}
+                            Состоит в данном чате
+                            {% endif %}                        
+                        </span></li></li>
+                {% endfor %}
+                {% endwith %}
+                </ul>
+              </div>
+        </div>
+    </div>
+    <div style="text-align: center;">
+        <p></p>
+        <a href="{{ chat.get_absolute_url }}">Вернуться к чату</a>
+
+        <!-- Кнопка-триггер модального окна -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            Удалить чат
+        </button>
+        <!-- Модальное окно -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Удаление чата</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                Вы уверены, что хотите удалить чат для всех?
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Нет, закрыть</button>
+                <button type="button" class="btn btn-primary"><a href="{% url 'chats:delete_group_chat' chat.pk %}" style="color: white;">Да, удалить</a></button>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
