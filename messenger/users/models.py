@@ -18,6 +18,7 @@ class CustomUser(AbstractUser):
         if self.last_online:
             return (timezone.now() - self.last_online) < timezone.timedelta(minutes=15)
         return False
+    
     def get_online_info(self):
         if self.is_online():
             return _('Online')
@@ -25,7 +26,7 @@ class CustomUser(AbstractUser):
             return _(f'Last visit {self.last_online}')
         return _('Unknown')
     
-    
+
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'

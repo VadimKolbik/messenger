@@ -11,7 +11,7 @@ class CustomUserAdmin(UserAdmin):
     add_form = CustomUserCreationForm
     form = CustomUserChangeForm
     model = CustomUser
-    list_display = ['pk', 'username',]
+    list_display = ['pk', 'username', 'last_online']
     list_display_links = ['pk', 'username', ]
 
 

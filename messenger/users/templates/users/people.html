@@ -14,6 +14,7 @@
     {% endif %}
     {% if u.first_name %} {{ u.first_name }} {% else %} {{ u.username }} {% endif %} 
     {% if u.last_name %} {{ u.last_name }} {% endif %}</a>
+    <span style="float: right; font-size: small; color: gray;">{{ u.get_online_info }}</span>
 </p>
 <hr>
 {% endfor %}

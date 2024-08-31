@@ -26,6 +26,7 @@ class ChatsView(MyLoginRequiredView, ListView):
     def get_queryset(self):
         #empty chats is have and filtering them
         #не получилось без сырого запроса сделать
+        
         return Chat.objects.filter(members__in=[self.request.user.id]).\
                             annotate(last_message=Max('messages__id'), last_message_time_create=Max('messages__time_create')).\
                             order_by('-last_message_time_create').\
