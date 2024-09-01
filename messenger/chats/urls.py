@@ -13,4 +13,5 @@ urlpatterns = [
     path('chats/info/<int:chat_id>/delete_user/<int:user_id>/', delete_user_from_group_chat, name='delete_user_from_chat'),
     path('chats/info/<int:chat_id>/add_user/<int:user_id>/', add_user_in_group_chat, name='add_user_in_chat'),
     path('chats/info/<int:chat_id>/delete/', chat_delete_view, name='delete_group_chat'),
+    path('chats/info/<int:chat_id>/rename_chat/', rename_group_chat, name='rename_group_chat'),
 ]

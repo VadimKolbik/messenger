@@ -22,6 +22,19 @@
                 </a>
                 {% endif %}
             </div>
+
+            {% if m.gallery_images %}
+            <div class="container" style="margin-top: 20px;">
+                <div style="display: flex; justify-content: left; flex-wrap: wrap;">
+                    {% for img in m.gallery_images.all %}
+                    <a data-fslightbox="gallery-{{m.pk}}" href="{{img.img.url}}" style="all: unset;">
+                        <img src="{{img.img.url}}" alt="" style="margin: 10px; cursor: pointer; object-fit: cover;  max-width: 175px;">
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
             <div>
                 {% if m.is_readed %}
                 <p>{{ m.text }} | <span style="float: right;">{{ m.time_create|date:"d.m.Y H:i" }}</span></p>
@@ -32,13 +45,30 @@
         </div>
         {% endfor %}
     </div>
-
-    <form action="" method="post" target="#here">
+    
+    <form action="" method="post" target="#here" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button id="send_enter" onclick="run()" type="submit">Отправить</button>
-        <p>ДОБАВИТЬ ВОЗМОЖНОСТЬ ОТПРАВЛЯТЬ ФОТО</p>
+        
+        <div class="input-group input-group-sm mb-3">
+            {{ form.text }} <button id="send_enter" onclick="run()" type="submit">Отправить</button> 
+        </div>
+        <div>
+            {{form.list_img}}
+        </div>
     </form>
 </div>
 
 {% endblock content %}
+
+
+<p>СНИЗУ ДЛЯ ПРЕДВАРИТЕЛЬНОГО ПРОСМОТРА ЗАГРУЖЕННОГО ФОТО, НО ТОЛЬКО ОДНОГО</p>
+<input accept="image/*" type='file' id="imgInp" />
+<img id="blah" src="#" alt="не выбрано ни одного изображения" height="100px" width="100px" />
+<script>
+    id_list_img.onchange = evt => {
+      const [file] = id_list_img.files
+      if (file) {
+        blah.src = URL.createObjectURL(file)
+      }
+    }
+</script>    

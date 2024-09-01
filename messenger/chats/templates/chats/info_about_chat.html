@@ -3,7 +3,37 @@
 {% block content %}
 <div class="chat">
     <h5><img class="img-article-chats " src="\media\photos\defalts\group_chat.png"></p>
-        {{ chat.title_chat }}</h5>
+        {{ chat.title_chat }} <button type="button" class="btn" style="float: right; font-size: small;" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            изменить название беседы
+        </button></h5>
+        <!-- Кнопка-триггер модального окна -->
+    
+    
+    <!-- Модальное окно -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Введите новое название беседы</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'chats:rename_group_chat' chat.pk %}" method="post">
+                    {% csrf_token %}
+                    <div class="input-group input-group-sm mb-3">
+                        <input type="text" class="form-control" aria-label="Пример размера поля ввода" aria-describedby="inputGroup-sizing-sm" name="new_title_chat" value="{{ chat.title_chat }}">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                        <button class="btn btn-primary" type="submit">Сохранить изменения</button>
+                    </div>
+                </form>
+            </div>
+            
+        </div>
+        </div>
+    </div>
+
     <div>
         <div>
         <p style="text-align: center;">Участники чата</p>
@@ -11,6 +41,9 @@
                 {% with chat.members.all as chat_members %}
                 {% for user in chat_members %}
                     <li class="list-group-item"><a href="{{user.get_absolute_url}}">{{user.username}}</a>
+                        {% if user == chat.group_chat_admin %}
+                        <span style="font-size: small;">(создатель беседы)</span>
+                        {% endif %}
                         <a href="{% url 'chats:delete_user_from_chat' chat.pk user.pk %}"><span style="float: right; font-size: small;">
                             {% if user != request.user %}
                             Исключить из беседы

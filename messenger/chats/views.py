@@ -79,6 +79,9 @@ class ChatView(MyLoginRequiredView, DetailView):
             message.chat_id = chat_id
             message.sender = request.user
             message.save()
+            uploaded_images = request.FILES.getlist('list_img')
+            for img in uploaded_images:
+                GalleryMessage.objects.create(message=message, img=img)
         return redirect(reverse('chats:chat', kwargs={'chat_id': chat_id}))
 
 class InfoAboutChatView(MyLoginRequiredView, DetailView):
@@ -142,6 +145,7 @@ class CreateGroupChatView(MyLoginRequiredView, View):
         if form.is_valid():
             title_chat, users = form.cleaned_data.values()
             new_group = Chat.objects.create(type_chat=Chat.ChatType.CHAT, title_chat=title_chat)
+            new_group.group_chat_admin = request.user
             new_group.members.add(get_user_model().objects.get(pk=request.user.pk))
             for user in users:
                 new_group.members.add(get_user_model().objects.get(pk=int(user)))
@@ -167,3 +171,8 @@ def add_user_in_group_chat(request, chat_id, user_id):
     group_chat.members.add(user_id)
     return redirect(reverse('chats:info_about_chat', kwargs={'chat_id': chat_id}))
 
+def rename_group_chat(request, chat_id):
+    group_chat = Chat.objects.get(pk=chat_id)
+    group_chat.title_chat = request.POST['new_title_chat']
+    group_chat.save()
+    return redirect(reverse('chats:info_about_chat', kwargs={'chat_id': chat_id}))

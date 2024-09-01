@@ -46,7 +46,8 @@ class Chat(models.Model):
     type_chat = models.CharField(max_length=1, choices=ChatType.choices, default=ChatType.DIALOG)
     members = models.ManyToManyField('users.CustomUser', related_name='chats', verbose_name='Участники')
     title_chat = models.CharField(max_length=100, blank=True, verbose_name='Название группового чата')
-    # group_chat_photo = models.ImageField(upload_to="photos/chats/%Y/%m/%d/", default=None, blank=True, null=True, verbose_name='Фото')
+    group_chat_photo = models.ImageField(upload_to="photos/chats/%Y/%m/%d/", default=None, blank=True, null=True, verbose_name='Фото')
+    group_chat_admin = models.ForeignKey('users.CustomUser', on_delete=models.SET_NULL, null=True)
 
     class Meta:
         verbose_name = 'Чат'
@@ -66,3 +67,7 @@ class Chat(models.Model):
             return self.messages.order_by('-time_create')[0]
         except IndexError:
             return None
+
+class GalleryMessage(models.Model):
+    img = models.ImageField(upload_to="photos/chats/%Y/%m/%d/", default=None, blank=True, null=True, verbose_name='Фото')
+    message = models.ForeignKey(Message, on_delete=models.CASCADE, related_name='gallery_images')
